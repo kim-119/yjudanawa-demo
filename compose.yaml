@@ -1,0 +1,85 @@
+services:
+  db:
+    image: 'pgvector/pgvector:pg16'
+    container_name: ydanawa-db
+    environment:
+      - 'POSTGRES_DB=ydanawa_db'
+      - 'POSTGRES_PASSWORD=0910'
+      - 'POSTGRES_USER=root'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d ydanawa_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - ydanawa-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ydanawa-backend
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ydanawa_db'
+      - 'SPRING_DATASOURCE_USERNAME=root'
+      - 'SPRING_DATASOURCE_PASSWORD=0910'
+      - 'KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY:-}'
+      - 'ALADIN_TTB_KEY=${ALADIN_TTB_KEY:-}'
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - ydanawa-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ydanawa-frontend
+    depends_on:
+      - backend
+    ports:
+      - '80:80'
+    restart: unless-stopped
+    networks:
+      - ydanawa-network
+
+  library-scraper:
+    build:
+      context: ./library-scraper
+      dockerfile: Dockerfile
+    container_name: ydanawa-library-scraper
+    ports:
+      - '8090:8090'
+      - '50051:50051'
+    restart: unless-stopped
+    networks:
+      - ydanawa-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import grpc; channel = grpc.insecure_channel('localhost:50051'); channel.close()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  pgdata:
+
+networks:
+  ydanawa-network:
+    driver: bridge
+
