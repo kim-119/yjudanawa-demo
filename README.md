@@ -4,6 +4,8 @@
 
 > 📖 **전체 프로젝트 문서**: [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md) - 모든 기능, 설정, 문제 해결 방법
 
+> 🔗 **팀 DB 접속**: [DB_접속_가이드.md](./DB_접속_가이드.md) | [DB_설정_완료.md](./DB_설정_완료.md)
+
 ## ✨ 주요 기능
 
 ### 📚 도서 검색
@@ -48,7 +50,9 @@
 ### 📍 접속 정보
 - **프론트엔드**: http://localhost
 - **백엔드 API**: http://localhost:8080/api
-- **데이터베이스**: localhost:5432
+- **데이터베이스**: localhost:5433 (ydanawa_db)
+
+> 💡 **팀원 DB 접속**: [DB_접속_가이드.md](./DB_접속_가이드.md) 참고
 
 ### 🛠️ 유용한 명령어
 

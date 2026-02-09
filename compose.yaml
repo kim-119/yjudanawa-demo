@@ -7,7 +7,11 @@ services:
       - 'POSTGRES_PASSWORD=0910'
       - 'POSTGRES_USER=root'
     ports:
-      - '5432:5432'
+      - '5433:5432'
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
     healthcheck:

@@ -1,4 +1,4 @@
-# Git Push 스크립트 (PowerShell)
+it Push 스크립트 (PowerShell)
 # Repository: https://github.com/kim-119/yjudanawa-demo
 
 Write-Host "========================================" -ForegroundColor Cyan
